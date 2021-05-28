@@ -10,21 +10,23 @@ public class DriveSubsystem extends SubsystemBase {
     private MecanumDrive drive;
     private Motor fL, fR, bL, bR;
 //    private RevIMU revIMU;
-    boolean fieldCentric;
+//    boolean fieldCentric;
 
     public DriveSubsystem(Motor frontLeft, Motor frontRight, Motor backLeft, Motor backRight) {
         fL = frontLeft;
         fR = frontRight;
         bL = backLeft;
         bR = backRight;
-        fieldCentric = false;
+//        fieldCentric = false;
         drive = new MecanumDrive(fL, fR, bL, bR);
     }
 
     public void drive(double strafeSpeed, double forwardSpeed, double turnSpeed) {
-        if(!fieldCentric) {
-            drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed, true);
-        }
+//        if(!fieldCentric) {
+//            drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed, true);
+//        }
+        drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed, true);
+
     }
 
 }
