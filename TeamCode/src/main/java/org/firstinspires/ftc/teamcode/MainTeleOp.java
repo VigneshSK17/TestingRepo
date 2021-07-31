@@ -15,16 +15,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.TimedAction;
 
-@TeleOp(name = "TestTeleOp") // Names the
+@TeleOp(name = "TestTeleOp") // Names the OP mode in the phone menu
 public class MainTeleOp extends LinearOpMode {
 
     /*
-    ██████╗░███████╗░█████╗░██╗░░░░░░█████╗░██████╗░░█████╗░████████╗██╗░█████╗░███╗░░██╗░██████╗
-    ██╔══██╗██╔════╝██╔══██╗██║░░░░░██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║██╔════╝
-    ██║░░██║█████╗░░██║░░╚═╝██║░░░░░███████║██████╔╝███████║░░░██║░░░██║██║░░██║██╔██╗██║╚█████╗░
-    ██║░░██║██╔══╝░░██║░░██╗██║░░░░░██╔══██║██╔══██╗██╔══██║░░░██║░░░██║██║░░██║██║╚████║░╚═══██╗
-    ██████╔╝███████╗╚█████╔╝███████╗██║░░██║██║░░██║██║░░██║░░░██║░░░██║╚█████╔╝██║░╚███║██████╔╝
-    ╚═════╝░╚══════╝░╚════╝░╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝╚═════╝░
+    $$$$$$$\                      $$\                               $$\     $$\
+    $$  __$$\                     $$ |                              $$ |    \__|
+    $$ |  $$ | $$$$$$\   $$$$$$$\ $$ | $$$$$$\   $$$$$$\  $$$$$$\ $$$$$$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$$\
+    $$ |  $$ |$$  __$$\ $$  _____|$$ | \____$$\ $$  __$$\ \____$$\\_$$  _|  $$ |$$  __$$\ $$  __$$\ $$  _____|
+    $$ |  $$ |$$$$$$$$ |$$ /      $$ | $$$$$$$ |$$ |  \__|$$$$$$$ | $$ |    $$ |$$ /  $$ |$$ |  $$ |\$$$$$$\
+    $$ |  $$ |$$   ____|$$ |      $$ |$$  __$$ |$$ |     $$  __$$ | $$ |$$\ $$ |$$ |  $$ |$$ |  $$ | \____$$\
+    $$$$$$$  |\$$$$$$$\ \$$$$$$$\ $$ |\$$$$$$$ |$$ |     \$$$$$$$ | \$$$$  |$$ |\$$$$$$  |$$ |  $$ |$$$$$$$  |
+    \_______/  \_______| \_______|\__| \_______|\__|      \_______|  \____/ \__| \______/ \__|  \__|\_______/
      */
 
     // Chassis Constants
@@ -56,12 +58,14 @@ public class MainTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         /*
-       ██╗███╗░░██╗██╗████████╗██╗░█████╗░██╗░░░░░██╗███████╗░█████╗░████████╗██╗░█████╗░███╗░░██╗░██████╗
-       ██║████╗░██║██║╚══██╔══╝██║██╔══██╗██║░░░░░██║╚════██║██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║██╔════╝
-       ██║██╔██╗██║██║░░░██║░░░██║███████║██║░░░░░██║░░███╔═╝███████║░░░██║░░░██║██║░░██║██╔██╗██║╚█████╗░
-       ██║██║╚████║██║░░░██║░░░██║██╔══██║██║░░░░░██║██╔══╝░░██╔══██║░░░██║░░░██║██║░░██║██║╚████║░╚═══██╗
-       ██║██║░╚███║██║░░░██║░░░██║██║░░██║███████╗██║███████╗██║░░██║░░░██║░░░██║╚█████╔╝██║░╚███║██████╔╝
-       ╚═╝╚═╝░░╚══╝╚═╝░░░╚═╝░░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝╚══════╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝╚═════╝░
+         /$$$$$$           /$$   /$$     /$$           /$$ /$$                       /$$     /$$
+        |_  $$_/          |__/  | $$    |__/          | $$|__/                      | $$    |__/
+          | $$   /$$$$$$$  /$$ /$$$$$$   /$$  /$$$$$$ | $$ /$$ /$$$$$$$$  /$$$$$$  /$$$$$$   /$$  /$$$$$$  /$$$$$$$   /$$$$$$$
+          | $$  | $$__  $$| $$|_  $$_/  | $$ |____  $$| $$| $$|____ /$$/ |____  $$|_  $$_/  | $$ /$$__  $$| $$__  $$ /$$_____/
+          | $$  | $$  \ $$| $$  | $$    | $$  /$$$$$$$| $$| $$   /$$$$/   /$$$$$$$  | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$
+          | $$  | $$  | $$| $$  | $$ /$$| $$ /$$__  $$| $$| $$  /$$__/   /$$__  $$  | $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
+         /$$$$$$| $$  | $$| $$  |  $$$$/| $$|  $$$$$$$| $$| $$ /$$$$$$$$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
+        |______/|__/  |__/|__/   \___/  |__/ \_______/|__/|__/|________/ \_______/   \___/  |__/ \______/ |__/  |__/|_______/
          */
 
         // Initialize Drivetrain Motors
@@ -151,12 +155,15 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
 
         /*
-        ██████╗░██╗░░░██╗███╗░░██╗████████╗██╗███╗░░░███╗███████╗
-        ██╔══██╗██║░░░██║████╗░██║╚══██╔══╝██║████╗░████║██╔════╝
-        ██████╔╝██║░░░██║██╔██╗██║░░░██║░░░██║██╔████╔██║█████╗░░
-        ██╔══██╗██║░░░██║██║╚████║░░░██║░░░██║██║╚██╔╝██║██╔══╝░░
-        ██║░░██║╚██████╔╝██║░╚███║░░░██║░░░██║██║░╚═╝░██║███████╗
-        ╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝░░░╚═╝░░░╚═╝╚═╝░░░░░╚═╝╚══════╝
+         _______                         __      __
+        /       \                       /  |    /  |
+        $$$$$$$  | __    __  _______   _$$ |_   $$/  _____  ____    ______
+        $$ |__$$ |/  |  /  |/       \ / $$   |  /  |/     \/    \  /      \
+        $$    $$< $$ |  $$ |$$$$$$$  |$$$$$$/   $$ |$$$$$$ $$$$  |/$$$$$$  |
+        $$$$$$$  |$$ |  $$ |$$ |  $$ |  $$ | __ $$ |$$ | $$ | $$ |$$    $$ |
+        $$ |  $$ |$$ \__$$ |$$ |  $$ |  $$ |/  |$$ |$$ | $$ | $$ |$$$$$$$$/
+        $$ |  $$ |$$    $$/ $$ |  $$ |  $$  $$/ $$ |$$ | $$ | $$ |$$       |
+        $$/   $$/  $$$$$$/  $$/   $$/    $$$$/  $$/ $$/  $$/  $$/  $$$$$$$/
          */
 
         time.reset(); // Sets time to zero
@@ -167,11 +174,15 @@ public class MainTeleOp extends LinearOpMode {
         // This runs in a loop while the robot is running in TeleOp and hasn't been stopped.
         while(opModeIsActive() && !isStopRequested()) {
 
-            // If right bumper is pressed, drivetrain speed will be divided by 3.
-            if(gamepad1.right_bumper) {
+            // If left trigger is pressed to 25% or greater, drivetrain speed will be divided by 3.
+            if(gamepad1.left_trigger >= 0.25) {
                 speedMultiplier = 0.33;
-            } else {
+            // If right trigger is pressed to 25% or greater, drivetrain speed will be set to max
+            } else if (gamepad1.right_trigger >= 0.25) {
                 speedMultiplier = 1;
+            // Else, set drivetrain speed to 0.9
+            } else {
+                speedMultiplier = 0.9;
             }
 
             // If the right bumper of either controller is pressed and the timedAction is running already, reset the timedAction
@@ -186,6 +197,56 @@ public class MainTeleOp extends LinearOpMode {
             // Voltage Sensor
             double voltage = voltageSensor.getVoltage(); // Gets voltage of battery
             double motorSpeed = Math.sqrt(10/voltage); // Takes the desired motor speed (10 in this case), and varies it based on how much voltage is in the battery.
+
+            // Takes the status of each button (whether it is being pressed or not)
+            buttonReaderA1.readValue();
+            buttonReaderA2.readValue();
+            buttonReaderB1.readValue();
+            buttonReaderB2.readValue();
+            buttonReaderX1.readValue();
+            buttonReaderX2.readValue();
+            buttonReaderY1.readValue();
+            buttonReaderY2.readValue();
+
+            buttonReaderdPadUp1.readValue();
+            buttonReaderdPadUp2.readValue();
+            buttonReaderdPadDown1.readValue();
+            buttonReaderdPadDown2.readValue();
+            buttonReaderdPadLeft1.readValue();
+            buttonReaderdPadLeft2.readValue();
+            buttonReaderdPadRight1.readValue();
+            buttonReaderdPadRight2.readValue();
+
+            // getState() on a buttonReader returns either true or false.
+
+            // Checking if the A button is pressed either on controller 1 or 2.
+            if(buttonReaderA1.getState() || buttonReaderA2.getState()) {
+                // If button A is pressed on either controller, set simpleServo to 90 degrees and then set it back to 0 degrees.
+                simpleServo.turnToAngle(90);
+                simpleServo.turnToAngle(0);
+            }
+
+            // Checking if right bumper was just pressed, then if right bumper was just released on either controller.
+            // Both methods use a means of pausing, and then doing another action. Using TimedAction is preferred.
+            if(rightBumper1.wasJustPressed() || rightBumper2.wasJustPressed()) {
+                // Turns servo half way from minimum to maximum angle, wait 500 milliseconds, move the servo to the maximum angle
+                simpleServo.setPosition(0.5);
+                Thread.sleep(500);
+                simpleServo.setPosition(1);
+
+            } else if(rightBumper1.wasJustReleased() || rightBumper2.wasJustReleased()) {
+                // Turns servo back to halfway, and then to starting position after 120 millisec delay.
+                timedAction.run();
+            }
+
+            // Telemetry Examples
+            // This prints onto the phone stats about the running robot, useful for debugging and diagnosing issues.
+            telemetry.addData("simpleServo position", simpleServo.getPosition());
+            telemetry.addData("simpleServo angle", simpleServo.getAngle());
+            telemetry.addData("Drivetrain Multiplier", motorSpeed);
+            telemetry.update(); // Needed at end for telemetry to show up
+
+
 
         }
 
