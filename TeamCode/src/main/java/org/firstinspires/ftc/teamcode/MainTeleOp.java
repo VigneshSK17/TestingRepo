@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.TimedAction;
 
-@TeleOp(name = "TestTeleOp") // Names the OP mode in the phone menu
+@TeleOp(name = "Template TeleOp") // Names the OP mode in the phone menu
 public class MainTeleOp extends LinearOpMode {
 
     /*
@@ -36,7 +36,6 @@ public class MainTeleOp extends LinearOpMode {
     // public static final double TICKS_PER_REV = 8192;
     // public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
 
-    // Initialize Variables
     private Motor fL, fR, bL, bR; // Drivetrain Motors
     private Motor extraMotor;
     private SimpleServo simpleServo; // Servos
@@ -221,9 +220,10 @@ public class MainTeleOp extends LinearOpMode {
 
             // Checking if the A button is pressed either on controller 1 or 2.
             if(buttonReaderA1.getState() || buttonReaderA2.getState()) {
-                // If button A is pressed on either controller, set simpleServo to 90 degrees and then set it back to 0 degrees.
-                simpleServo.turnToAngle(90);
-                simpleServo.turnToAngle(0);
+                // Sets the extra motor to half speed, then revert after 100 ms.
+                extraMotor.set(0.5);
+                Thread.sleep(100);
+                extraMotor.stopMotor();
             }
 
             // Checking if right bumper was just pressed, then if right bumper was just released on either controller.
