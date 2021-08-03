@@ -36,9 +36,9 @@ public class MainTeleOp extends LinearOpMode {
     // public static final double TICKS_PER_REV = 8192;
     // public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
 
-    private Motor fL, fR, bL, bR; // Drivetrain Motors
-    private Motor extraMotor;
-    private SimpleServo simpleServo; // Servos
+    private Motor frontLeft, frontRight, backLeft, backRight; // Drivetrain Motors
+    private Motor mExtra;
+    private SimpleServo sSimple; // Servos
     // private RevIMU imu; // Measurement unit on the Rev Hub, not necessary with odom wheels
     private GamepadEx gPad1, gPad2; // Gamepads
     private MecanumDrive drivetrain; // The Drivetrain
@@ -50,7 +50,7 @@ public class MainTeleOp extends LinearOpMode {
     private ButtonReader rightBumper2, leftBumper2; // Bumpers of controller
     private VoltageSensor voltageSensor;
 
-    private ElapsedTime time;
+    private ElapsedTime t0;
     private TimedAction timedAction; // Action for X amount of time
 
     @Override
@@ -68,18 +68,18 @@ public class MainTeleOp extends LinearOpMode {
          */
 
         // Initialize Drivetrain Motors
-        fL = new Motor(hardwareMap, "frontLeft");
-        fR = new Motor(hardwareMap, "frontRight");
-        bL = new Motor(hardwareMap, "backLeft");
-        bR = new Motor(hardwareMap, "backRight");
+        frontLeft = new Motor(hardwareMap, "frontLeft");
+        frontRight = new Motor(hardwareMap, "frontRight");
+        backLeft = new Motor(hardwareMap, "backLeft");
+        backRight = new Motor(hardwareMap, "backRight");
 
-        extraMotor = new Motor(hardwareMap, "extra");
+        mExtra = new Motor(hardwareMap, "extra");
 
         // Initialize servos
-        simpleServo = new SimpleServo(hardwareMap, "servo", 0, 270);
+        sSimple = new SimpleServo(hardwareMap, "servo", 0, 270);
 
         // Initialize drivetrain
-        drivetrain = new MecanumDrive(fL, fR, bL, bR);
+        drivetrain = new MecanumDrive(frontLeft, frontRight, backLeft, backRight);
 
         // Initialize Gamepads
         gPad1 = new GamepadEx(gamepad1); gPad2 = new GamepadEx(gamepad2);
@@ -113,7 +113,7 @@ public class MainTeleOp extends LinearOpMode {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         // Initialize ElapsedTime thing
-        time = new ElapsedTime();
+        t0 = new ElapsedTime();
 
         /*
         ▒█▀▀▀ █░█ ▀▀█▀▀ █▀▀█ █▀▀█ 　 ▒█▀▀▀█ █▀▀ ▀▀█▀▀ █░░█ █▀▀█
@@ -122,30 +122,30 @@ public class MainTeleOp extends LinearOpMode {
          */
 
         // Disable encoders on drivetrain motors
-        fL.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fL.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fR.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bL.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bL.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bR.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bR.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Would set coefficients and stuff like that for motors here.
-        extraMotor.setInverted(true); // Inverts motor
-        extraMotor.resetEncoder(); // Resets encoder to default value, necessary prior to starting robot.
+        mExtra.setInverted(true); // Inverts motor
+        mExtra.resetEncoder(); // Resets encoder to default value, necessary prior to starting robot.
 
         // How to set up PID
         // More info: https://acme-robotics.gitbook.io/road-runner/tour/pid-control
-        extraMotor.setRunMode(Motor.RunMode.VelocityControl); // Enable velocity control
-        extraMotor.setVeloCoefficients(0.3,0,0); // KP: Proportional Gain, KI: Integral Gain, KD = Derivative Gain
-        extraMotor.setFeedforwardCoefficients(1, 1.305);
+        mExtra.setRunMode(Motor.RunMode.VelocityControl); // Enable velocity control
+        mExtra.setVeloCoefficients(0.3,0,0); // KP: Proportional Gain, KI: Integral Gain, KD = Derivative Gain
+        mExtra.setFeedforwardCoefficients(1, 1.305);
 
 
         // Create TimedAction, for example:
         timedAction = new TimedAction(
-                () -> simpleServo.setPosition(0.5), // Runs at start
-                () -> simpleServo.setPosition(0), // Runs at end
+                () -> sSimple.setPosition(0.5), // Runs at start
+                () -> sSimple.setPosition(0), // Runs at end
                 120, // How many seconds until end
                 true
         );
@@ -165,7 +165,7 @@ public class MainTeleOp extends LinearOpMode {
         $$/   $$/  $$$$$$/  $$/   $$/    $$$$/  $$/ $$/  $$/  $$/  $$$$$$$/
          */
 
-        time.reset(); // Sets time to zero
+        t0.reset(); // Sets time to zero
 
         double speedMultiplier = 1;
         boolean movingBack = false;
@@ -194,8 +194,8 @@ public class MainTeleOp extends LinearOpMode {
             drivetrain.driveRobotCentric(-gPad1.getLeftX() * speedMultiplier, -gPad1.getLeftY() * speedMultiplier, -gPad1.getRightX() * speedMultiplier);
 
             // Voltage Sensor
-            double voltage = voltageSensor.getVoltage(); // Gets voltage of battery
-            double motorSpeed = Math.sqrt(10/voltage); // Takes the desired motor speed (10 in this case), and varies it based on how much voltage is in the battery.
+            double v = voltageSensor.getVoltage(); // Gets voltage of battery
+            double vMotorSpeed = Math.sqrt(10/v); // Takes the desired motor speed (10 in this case), and varies it based on how much voltage is in the battery.
 
             // Takes the status of each button (whether it is being pressed or not)
             buttonReaderA1.readValue();
@@ -221,18 +221,18 @@ public class MainTeleOp extends LinearOpMode {
             // Checking if the A button is pressed either on controller 1 or 2.
             if(buttonReaderA1.getState() || buttonReaderA2.getState()) {
                 // Sets the extra motor to half speed, then revert after 100 ms.
-                extraMotor.set(0.5);
+                mExtra.set(0.5);
                 Thread.sleep(100);
-                extraMotor.stopMotor();
+                mExtra.stopMotor();
             }
 
             // Checking if right bumper was just pressed, then if right bumper was just released on either controller.
             // Both methods use a means of pausing, and then doing another action. Using TimedAction is preferred.
             if(rightBumper1.wasJustPressed() || rightBumper2.wasJustPressed()) {
                 // Turns servo half way from minimum to maximum angle, wait 500 milliseconds, move the servo to the maximum angle
-                simpleServo.setPosition(0.5);
+                sSimple.setPosition(0.5);
                 Thread.sleep(500);
-                simpleServo.setPosition(1);
+                sSimple.setPosition(1);
 
             } else if(rightBumper1.wasJustReleased() || rightBumper2.wasJustReleased()) {
                 // Turns servo back to halfway, and then to starting position after 120 millisec delay.
@@ -241,9 +241,9 @@ public class MainTeleOp extends LinearOpMode {
 
             // Telemetry Examples
             // This prints onto the phone stats about the running robot, useful for debugging and diagnosing issues.
-            telemetry.addData("simpleServo position", simpleServo.getPosition());
-            telemetry.addData("simpleServo angle", simpleServo.getAngle());
-            telemetry.addData("Drivetrain Multiplier", motorSpeed);
+            telemetry.addData("simpleServo position", sSimple.getPosition());
+            telemetry.addData("simpleServo angle", sSimple.getAngle());
+            telemetry.addData("Drivetrain Multiplier", vMotorSpeed);
             telemetry.update(); // Needed at end for telemetry to show up
 
 
