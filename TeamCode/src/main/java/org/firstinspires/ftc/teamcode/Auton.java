@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+// Imports
+// RoadRunner Imports
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+
+// FTCLib imports
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
+
+// FTC SDK imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +20,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.TimedAction;
+
+// OpenCV imports
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -38,16 +46,15 @@ public class Auton extends LinearOpMode {
 
     private Motor fL, fR, bL, bR;
     private Motor extraMotor;
-    private SampleMecanumDrive drive;
     private SimpleServo simpleServo;
 
     private MecanumDrive mecDrive;  // Creates the "drivetrain" for the Roadrunner paths.
-    private Pose2d pStart = new Pose2d(10, 10, Math.toRadians(0)); // Bot will start (from center) 10 down, 10 to the left, and facing towards the front (on coord grid).
+    private SampleMecanumDrive drive; // Mecanum Drive for Roadrunner Autonomous
+    private Pose2d pStart = new Pose2d(-15.0, 3.0, Math.toRadians(-50.0)); // Bot will start (from center) 15 up, 3 to the left, and facing 50 degrees to the left from facing forward (on coord grid).
+    private Trajectories trajs; // Class with all methods to run autonomous trajectories, will talk more about later.
 
     private ElapsedTime t0, t1;
     private VoltageSensor voltageSensor;
-
-    private TimedAction timedAction;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -79,7 +86,7 @@ public class Auton extends LinearOpMode {
         drive.setPoseEstimate(pStart); // Sets the start pose for the MecanumDrivetrain to the pose initialized earlier.
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next(); // How to get voltage
-        double volts = 10 / voltageSensor.getVoltage();
+        double variableVolts = 12 / voltageSensor.getVoltage(); // Add comment later
 
         // Invert drivetrain motors.
         fL.setInverted(true);
@@ -92,14 +99,6 @@ public class Auton extends LinearOpMode {
         fR.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bL.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bL.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Sets servo to max position, then waits 1000 seconds, and then sets position to 0.1
-        timedAction = new TimedAction(
-                () -> simpleServo.setPosition(1),
-                () -> simpleServo.setPosition(0.1),
-                1000,
-                true
-        );
 
         /*
         ▒█▀▀█ █▀▀█ █▀▄▀█ █▀▀ █▀▀█ █▀▀█ 　 ▒█▀▀▀█ █▀▀ ▀▀█▀▀ █░░█ █▀▀█
@@ -155,6 +154,9 @@ public class Auton extends LinearOpMode {
         t0.reset();
         t1.reset();
 
+        // Set up trajectories for later
+        trajs = new Trajectories(drive, extraMotor, simpleServo, telemetry);
+
         // Start up the pipeline and get some telemetry displayed about it.
         UGContourRingPipeline.Height pHeight = pipeline.getHeight();
         telemetry.addData("Ring stack size: ", pHeight);
@@ -163,5 +165,19 @@ public class Auton extends LinearOpMode {
         // Updates telemetry each time.
         telemetry.update();
 
+        /*
+        ▒█▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀█ █░░█ █▀▀▄ █▀▀▄ █▀▀ █▀▀█
+        ▒█▄▄▀ █░░█ █▄▄█ █░░█ █▄▄▀ █░░█ █░░█ █░░█ █▀▀ █▄▄▀
+        ▒█░▒█ ▀▀▀▀ ▀░░▀ ▀▀▀░ ▀░▀▀ ░▀▀▀ ▀░░▀ ▀░░▀ ▀▀▀ ▀░▀▀
+         */
+
+        // Roadrunner allows for autonomous to be done through the use of coordinates and paths instead of guessing how much the motors needs to turn.
+        // For this to be done, variables do have to be tuned in DriveConstants.java
+
+        // Everything else in Trajectories.java
+
+        // DISCLAIMER: The following auton is done with an Ultimate Goal pipeline, so some things will be different year-by-year.
+
+        trajs.run(pHeight);
     }
 }

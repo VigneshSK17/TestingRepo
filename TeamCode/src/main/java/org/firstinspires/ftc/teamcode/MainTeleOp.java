@@ -51,7 +51,7 @@ public class MainTeleOp extends LinearOpMode {
     private VoltageSensor voltageSensor;
 
     private ElapsedTime t0;
-    private TimedAction timedAction; // Action for X amount of time
+    private TimedAction tA0; // Action for X amount of time
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -143,7 +143,7 @@ public class MainTeleOp extends LinearOpMode {
 
 
         // Create TimedAction, for example:
-        timedAction = new TimedAction(
+        tA0 = new TimedAction(
                 () -> sSimple.setPosition(0.5), // Runs at start
                 () -> sSimple.setPosition(0), // Runs at end
                 120, // How many seconds until end
@@ -185,11 +185,11 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             // If the right bumper of either controller is pressed and the timedAction is running already, reset the timedAction
-            if((rightBumper1.isDown() && !timedAction.running()) || (rightBumper2.isDown() && !timedAction.running()))
-                timedAction.reset();
+            if((rightBumper1.isDown() && !tA0.running()) || (rightBumper2.isDown() && !tA0.running()))
+                tA0.reset();
 
             // Always starts up the timedAction to possible be run.
-            timedAction.run();
+            tA0.run();
 
             drivetrain.driveRobotCentric(-gPad1.getLeftX() * speedMultiplier, -gPad1.getLeftY() * speedMultiplier, -gPad1.getRightX() * speedMultiplier);
 
@@ -236,7 +236,7 @@ public class MainTeleOp extends LinearOpMode {
 
             } else if(rightBumper1.wasJustReleased() || rightBumper2.wasJustReleased()) {
                 // Turns servo back to halfway, and then to starting position after 120 millisec delay.
-                timedAction.run();
+                tA0.run();
             }
 
             // Telemetry Examples
