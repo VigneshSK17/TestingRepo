@@ -44,10 +44,10 @@ public class MainTeleOp extends LinearOpMode {
     private MecanumDrive drivetrain; // The Drivetrain
     // private Motor.Encoder leftOdometer, rightOdometer, centerOdometer; // Odometer Wheels, not used here
     // private OdometrySubsystem odometry; // Odometry as a whole, not used here
-    private ToggleButtonReader buttonReaderY1, buttonReaderA1, buttonReaderX1, buttonReaderB1, buttonReaderdPadUp1, buttonReaderdPadDown1, buttonReaderdPadRight1, buttonReaderdPadLeft1; // Toggle Buttons on Gamepad 1
-    private ToggleButtonReader buttonReaderY2, buttonReaderA2, buttonReaderX2, buttonReaderB2, buttonReaderdPadUp2, buttonReaderdPadDown2, buttonReaderdPadRight2, buttonReaderdPadLeft2; // Toggle Buttons on Gamepad 2
-    private ButtonReader rightBumper1, leftBumper1; // Bumpers of controller
-    private ButtonReader rightBumper2, leftBumper2; // Bumpers of controller
+    private ToggleButtonReader buttonReaderY1, buttonReaderA1, buttonReaderX1, buttonReaderB1, buttonReaderdPadUp1, buttonReaderdPadDown1, buttonReaderdPadRight1, buttonReaderdPadLeft1, buttonReaderBumperLeft1, buttonReaderBumperRight1, buttonReaderJoystickLeft1, buttonReaderJoystickRight1; // Toggle Buttons on Gamepad 1
+    private ToggleButtonReader buttonReaderY2, buttonReaderA2, buttonReaderX2, buttonReaderB2, buttonReaderdPadUp2, buttonReaderdPadDown2, buttonReaderdPadRight2, buttonReaderdPadLeft2, buttonReaderBumperLeft2, buttonReaderBumperRight2, buttonReaderJoystickLeft2, buttonReaderJoystickRight2; // Toggle Buttons on Gamepad 2
+    private ButtonReader rightTrigger1, leftTrigger1; // Triggers of controller
+    private ButtonReader rightTrigger2, leftTrigger2; // Triggers of controller
     private VoltageSensor voltageSensor;
 
     private ElapsedTime t0;
@@ -95,10 +95,15 @@ public class MainTeleOp extends LinearOpMode {
         buttonReaderB2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.B);
 
         // Initialize Other Gamepad Buttons
-        leftBumper1 = new ButtonReader(gPad1, GamepadKeys.Button.LEFT_BUMPER);
-        leftBumper2 = new ButtonReader(gPad2, GamepadKeys.Button.LEFT_BUMPER);
-        rightBumper1 = new ButtonReader(gPad1, GamepadKeys.Button.RIGHT_BUMPER);
-        rightBumper2 = new ButtonReader(gPad2, GamepadKeys.Button.RIGHT_BUMPER);
+        leftTrigger1 = new ButtonReader(gPad1, GamepadKeys.Button.LEFT_BUMPER);
+        leftTrigger2 = new ButtonReader(gPad2, GamepadKeys.Button.LEFT_BUMPER);
+        rightTrigger1 = new ButtonReader(gPad1, GamepadKeys.Button.RIGHT_BUMPER);
+        rightTrigger2 = new ButtonReader(gPad2, GamepadKeys.Button.RIGHT_BUMPER);
+
+        buttonReaderBumperLeft1 = new ToggleButtonReader(gPad1, GamepadKeys.Button.LEFT_BUMPER);
+        buttonReaderBumperLeft2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.LEFT_BUMPER);
+        buttonReaderBumperRight1 = new ToggleButtonReader(gPad1, GamepadKeys.Button.RIGHT_BUMPER);
+        buttonReaderBumperRight2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.RIGHT_BUMPER);
 
         buttonReaderdPadUp1 = new ToggleButtonReader(gPad1, GamepadKeys.Button.DPAD_UP);
         buttonReaderdPadUp2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.DPAD_UP);
@@ -108,6 +113,12 @@ public class MainTeleOp extends LinearOpMode {
         buttonReaderdPadLeft2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.DPAD_LEFT);
         buttonReaderdPadRight1 = new ToggleButtonReader(gPad1, GamepadKeys.Button.DPAD_RIGHT);
         buttonReaderdPadRight2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.DPAD_RIGHT);
+
+        buttonReaderJoystickLeft1 = new ToggleButtonReader(gPad1, GamepadKeys.Button.LEFT_STICK_BUTTON);
+        buttonReaderJoystickLeft2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.LEFT_STICK_BUTTON);
+        buttonReaderJoystickRight1 = new ToggleButtonReader(gPad1, GamepadKeys.Button.LEFT_STICK_BUTTON);
+        buttonReaderJoystickRight2 = new ToggleButtonReader(gPad2, GamepadKeys.Button.LEFT_STICK_BUTTON);
+
 
         // Initialize Voltage Sensor
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -140,7 +151,6 @@ public class MainTeleOp extends LinearOpMode {
         mExtra.setRunMode(Motor.RunMode.VelocityControl); // Enable velocity control
         mExtra.setVeloCoefficients(0.3,0,0); // KP: Proportional Gain, KI: Integral Gain, KD = Derivative Gain
         mExtra.setFeedforwardCoefficients(1, 1.305);
-
 
         // Create TimedAction, for example:
         tA0 = new TimedAction(
@@ -185,7 +195,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             // If the right bumper of either controller is pressed and the timedAction is running already, reset the timedAction
-            if((rightBumper1.isDown() && !tA0.running()) || (rightBumper2.isDown() && !tA0.running()))
+            if((rightTrigger1.isDown() && !tA0.running()) || (rightTrigger2.isDown() && !tA0.running()))
                 tA0.reset();
 
             // Always starts up the timedAction to possible be run.
@@ -198,6 +208,11 @@ public class MainTeleOp extends LinearOpMode {
             double vMotorSpeed = Math.sqrt(10/v); // Takes the desired motor speed (10 in this case), and varies it based on how much voltage is in the battery.
 
             // Takes the status of each button (whether it is being pressed or not)
+            buttonReaderBumperLeft1.readValue();
+            buttonReaderBumperLeft2.readValue();
+            buttonReaderBumperRight1.readValue();
+            buttonReaderBumperRight2.readValue();
+
             buttonReaderA1.readValue();
             buttonReaderA2.readValue();
             buttonReaderB1.readValue();
@@ -216,6 +231,11 @@ public class MainTeleOp extends LinearOpMode {
             buttonReaderdPadRight1.readValue();
             buttonReaderdPadRight2.readValue();
 
+            buttonReaderJoystickLeft1.readValue();
+            buttonReaderJoystickLeft2.readValue();
+            buttonReaderJoystickRight1.readValue();
+            buttonReaderJoystickRight2.readValue();
+
             // getState() on a buttonReader returns either true or false.
 
             // Checking if the A button is pressed either on controller 1 or 2.
@@ -228,23 +248,22 @@ public class MainTeleOp extends LinearOpMode {
 
             // Checking if right bumper was just pressed, then if right bumper was just released on either controller.
             // Both methods use a means of pausing, and then doing another action. Using TimedAction is preferred.
-            if(rightBumper1.wasJustPressed() || rightBumper2.wasJustPressed()) {
+            if(rightTrigger1.wasJustPressed() || rightTrigger2.wasJustPressed()) {
                 // Turns servo half way from minimum to maximum angle, wait 500 milliseconds, move the servo to the maximum angle
                 sSimple.setPosition(0.5);
                 Thread.sleep(500);
                 sSimple.setPosition(1);
 
-            } else if(rightBumper1.wasJustReleased() || rightBumper2.wasJustReleased()) {
+            } else if(rightTrigger1.wasJustReleased() || rightTrigger2.wasJustReleased()) {
                 // Turns servo back to halfway, and then to starting position after 120 millisec delay.
                 tA0.run();
             }
 
-            // Telemetry Examples
-            // This prints onto the phone stats about the running robot, useful for debugging and diagnosing issues.
-            telemetry.addData("simpleServo position", sSimple.getPosition());
-            telemetry.addData("simpleServo angle", sSimple.getAngle());
-            telemetry.addData("Drivetrain Multiplier", vMotorSpeed);
-            telemetry.update(); // Needed at end for telemetry to show up
+            // telemetry examples
+            // this prints onto the phone stats about the running robot, useful for debugging and diagnosing issues.
+            telemetry.addData("simpleservo position", sSimple.getPosition());
+            telemetry.addData("simpleservo angle", sSimple.getAngle());
+            telemetry.update(); // needed at end for telemetry to show up
 
 
 
